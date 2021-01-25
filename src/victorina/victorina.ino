@@ -22,9 +22,26 @@
  * SOFTWARE.
  */
 
+enum VictorinaState {
+  VictorinaStateNull = 0,
+  VictorinaStateIdle,
+  VictorinaStateRun1,
+  VictorinaStateRun2
+};
+
+const int LED1 = 13;
+const int LED2 = 12;
+const int LED3 = 11;
+const int LED4 = 10;
+
+static VictorinaState TheVictorinaState = VictorinaStateNull;
+
 void setup() {
   // put your setup code here, to run once:
-
+  pinMode(LED1, OUTPUT);
+  pinMode(LED2, OUTPUT);
+  pinMode(LED3, OUTPUT);
+  pinMode(LED4, OUTPUT);
 }
 
 void loop() {
