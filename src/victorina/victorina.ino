@@ -34,7 +34,10 @@ const int LED2 = 12;
 const int LED3 = 11;
 const int LED4 = 10;
 
+static unsigned long TheVar = 0;
 static VictorinaState TheVictorinaState = VictorinaStateNull;
+
+static void loop_500ms();
 
 void setup() {
   // put your setup code here, to run once:
@@ -46,5 +49,19 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  unsigned long time_now = millis();
+  if (TheVar == 0)
+  {
+    loop_500ms();
+    TheVar = time_now + 500;
+  }
+  else if (time_now >= TheVar)
+  {
+    loop_500ms();
+    TheVar = time_now + 500;
+  }
+}
 
+void loop_500ms()
+{
 }
