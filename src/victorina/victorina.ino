@@ -36,6 +36,7 @@ const int LED4 = 10;
 
 static unsigned long TheVar = 0;
 static VictorinaState TheVictorinaState = VictorinaStateNull;
+static int TheState = 0;
 
 static void loop_500ms();
 
@@ -64,4 +65,20 @@ void loop() {
 
 void loop_500ms()
 {
+  if (TheState == 0)
+  {
+    digitalWrite(LED1, HIGH);
+    digitalWrite(LED2, HIGH);
+    digitalWrite(LED3, HIGH);
+    digitalWrite(LED4, HIGH);
+    TheState = 1;
+  }
+  else
+  {
+     digitalWrite(LED1, LOW);
+     digitalWrite(LED2, LOW);
+     digitalWrite(LED3, LOW);
+     digitalWrite(LED4, LOW);
+     TheState = 0;
+  }
 }
