@@ -38,6 +38,7 @@ static unsigned long TheVar = 0;
 static VictorinaState TheVictorinaState = VictorinaStateNull;
 static int TheState = 0;
 
+static void update_LEDs();
 static void loop_500ms();
 
 void setup() {
@@ -61,17 +62,19 @@ void loop() {
     loop_500ms();
     TheVar = time_now + 500;
   }
+  update_LEDs();
 }
 
 void loop_500ms()
 {
+#if 0
   if (TheState == 0)
   {
     digitalWrite(LED1, HIGH);
     digitalWrite(LED2, HIGH);
     digitalWrite(LED3, HIGH);
     digitalWrite(LED4, HIGH);
-    TheState = 1;
+    TheState = TheState+1;
   }
   else
   {
@@ -80,5 +83,40 @@ void loop_500ms()
      digitalWrite(LED3, LOW);
      digitalWrite(LED4, LOW);
      TheState = 0;
+  }
+#endif
+  TheState = TheState+1;
+}
+
+void update_LEDs()
+{
+  int rem = TheState%4;
+  if (rem == 0)
+  {
+    digitalWrite(LED1, LOW);
+    digitalWrite(LED2, HIGH);
+    digitalWrite(LED3, HIGH);
+    digitalWrite(LED4, HIGH);
+  }
+  else if (rem == 1)
+  {
+    digitalWrite(LED1, HIGH);
+    digitalWrite(LED2, LOW);
+    digitalWrite(LED3, HIGH);
+    digitalWrite(LED4, HIGH);
+  }
+  else if (rem == 2)
+  {
+    digitalWrite(LED1, HIGH);
+    digitalWrite(LED2, HIGH);
+    digitalWrite(LED3, LOW);
+    digitalWrite(LED4, HIGH);
+  }
+  else if (rem == 3)
+  {
+    digitalWrite(LED1, HIGH);
+    digitalWrite(LED2, HIGH);
+    digitalWrite(LED3, HIGH);
+    digitalWrite(LED4, LOW);
   }
 }
