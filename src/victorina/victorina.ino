@@ -37,9 +37,11 @@ const int LED4 = 10;
 static unsigned long TheVar = 0;
 static VictorinaState TheVictorinaState = VictorinaStateNull;
 static int TheState = 0;
+static unsigned long TheOldButtonState = 1;
 
 static void update_LEDs();
 static void loop_500ms();
+static void handle_button_press();
 
 void setup() {
   // put your setup code here, to run once:
@@ -47,6 +49,7 @@ void setup() {
   pinMode(LED2, OUTPUT);
   pinMode(LED3, OUTPUT);
   pinMode(LED4, OUTPUT);
+  pinMode(A5, INPUT);
 }
 
 void loop() {
@@ -63,6 +66,15 @@ void loop() {
     TheVar = time_now + 500;
   }
   update_LEDs();
+  int but = digitalRead(A5);
+  if (but != TheOldButtonState)
+  {
+    TheOldButtonState = but;
+    if (but == 0)
+    {
+      handle_button_press();
+    }
+  }
 }
 
 void loop_500ms()
@@ -85,7 +97,6 @@ void loop_500ms()
      TheState = 0;
   }
 #endif
-  TheState = TheState+1;
 }
 
 void update_LEDs()
@@ -119,4 +130,9 @@ void update_LEDs()
     digitalWrite(LED3, HIGH);
     digitalWrite(LED4, LOW);
   }
+}
+
+void handle_button_press()
+{
+  TheState = TheState + 1;
 }
