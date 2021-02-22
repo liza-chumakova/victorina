@@ -50,6 +50,10 @@ static int TheGarlandActiveLED = 0;
 static unsigned long TheOldButtonState = 1;
 static ezButton ThePresenterButton1(PRESENTER_KEY_1);
 static ezButton ThePresenterButton2(PRESENTER_KEY_2);
+static int TheParticipant1Winner = 0;
+static int TheParticipant2Winner = 0;
+static int TheParticipant3Winner = 0;
+
 
 static void update_LEDs();
 static void loop_500ms();
@@ -99,7 +103,7 @@ void loop()
   }
 }
 
-void loop_500ms()
+void loop_250ms()
 {
   if (0 == TheGarlandActiveLED)
   {
@@ -162,7 +166,7 @@ void loop_garland()
   const int timeNow = millis();
   if(0 == TheGarlandNextSwitchTimeMs || TheGarlandNextSwitchTimeMs <= timeNow)
   {
-    loop_500ms();
+    loop_250ms();
     TheGarlandNextSwitchTimeMs = timeNow + 250;
   }
 }
@@ -175,7 +179,13 @@ void loop_test()
   // Проверим, надо ли переходить в другие состояния
   if (ThePresenterButton1.isPressed())
   {
+    digitalWrite(PARTICIPANT_1_LED, HIGH);
+    digitalWrite(PARTICIPANT_2_LED, HIGH);
+    digitalWrite(PARTICIPANT_3_LED, HIGH);
+    digitalWrite(PRESENTER_EXTRA_LED, HIGH);
+
     TheVictorinaState = VictorinaStateWaitingForWinner;
+    ThePresenterButton1.loop();
   }
 
   digitalWrite(PARTICIPANT_1_LED, digitalRead(PARTICIPANT_1_KEY));
@@ -185,10 +195,13 @@ void loop_test()
 
 void loop_waiting_for_winner()
 {
-  digitalWrite(PARTICIPANT_1_LED, HIGH);
-  digitalWrite(PARTICIPANT_2_LED, HIGH);
-  digitalWrite(PARTICIPANT_3_LED, HIGH);
-  digitalWrite(PRESENTER_EXTRA_LED, HIGH);
+  TheParticipant1Winner = digitalRead(PARTICIPANT_1_KEY);
+  TheParticipant2Winner = digitalRead(PARTICIPANT_2_KEY);
+  TheParticipant3Winner = digitalRead(PARTICIPANT_3_KEY);
+  if (TheParticipant1Winner == LOW || TheParticipant2Winner == LOW || TheParticipant3Winner == LOW)
+  {
+    TheVictorinaState = VictorinaStateDisplayWinner;
+  }
 }
 
 void loop_display_winner()
@@ -196,4 +209,34 @@ void loop_display_winner()
   // Даём возможность первой и второй кнопкам обработать то, что им надо
   ThePresenterButton1.loop();
   ThePresenterButton2.loop();
+  if (TheParticipant1Winner == LOW)
+  {
+    digitalWrite(PARTICIPANT_1_LED, LOW);
+  }
+  if (TheParticipant2Winner == LOW)
+  {
+    digitalWrite(PARTICIPANT_2_LED, LOW);
+  }
+  if (TheParticipant3Winner == LOW)
+  {
+    digitalWrite(PARTICIPANT_3_LED, LOW);
+  }
+  if (ThePresenterButton1.isPressed())
+  {
+    digitalWrite(PARTICIPANT_1_LED, HIGH);
+    digitalWrite(PARTICIPANT_2_LED, HIGH);
+    digitalWrite(PARTICIPANT_3_LED, HIGH);
+    digitalWrite(PRESENTER_EXTRA_LED, HIGH);
+
+    TheVictorinaState = VictorinaStateIdle;
+  }
+  if (ThePresenterButton2.isPressed())
+  {
+    digitalWrite(PARTICIPANT_1_LED, HIGH);
+    digitalWrite(PARTICIPANT_2_LED, HIGH);
+    digitalWrite(PARTICIPANT_3_LED, HIGH);
+    digitalWrite(PRESENTER_EXTRA_LED, HIGH);
+
+    TheVictorinaState = VictorinaStateWaitingForWinner;
+  }
 }
